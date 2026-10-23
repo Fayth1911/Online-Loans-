@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FYTH // ONLINE LOANS</title>
+  <style>
+    :root {
+      --bg: #050707;
+      --panel: #0b1110;
+      --line: #24302c;
+      --green: #9df5c8;
+      --muted: #84938d;
+      --red: #ff304f;
+      --white: #e8f1ed
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Consolas, "Courier New", monospace
+    }
+
+    body {
+      overflow-x: hidden
+    }
+
+    body:before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .035) 4px), radial-gradient(ellipse at center, transparent 25%, rgba(0, 0, 0, .72) 100%);
+      mix-blend-mode: screen;
+      opacity: .55
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px
+    }
+
+    .device {
+      width: min(100%, 430px);
+      min-height: min(850px, calc(100vh - 40px));
+      border: 1px solid #34413b;
+      border-radius: 24px;
+      background: linear-gradient(160deg, #0c1210, #030505 70%);
+      box-shadow: 0 20px 80px #000, 0 0 24px #9df5c80b;
+      position: relative;
+      overflow: hidden
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 17px;
+      color: #b7c6bf;
+      font-size: 11px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    main {
+      padding: 22px 20px 25px;
+      position: relative
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--muted)
+    }
+
+    h1 {
+      font-size: clamp(26px, 8vw, 38px);
+      letter-spacing: 4px;
+      margin: 12px 0 4px;
+      font-weight: 500
+    }
+
+    .sub {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px
+    }
+
+    .rule {
+      height: 1px;
+      background: var(--line);
+      margin: 22px 0
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 9px
+    }
+
+    .bar {
+      height: 5px;
+      background: #1a2520;
+      border: 1px solid #2d3933;
+      overflow: hidden
+    }
+
+    .fill {
+      height: 100%;
+      width: 0;
+      background: var(--green);
+      box-shadow: 0 0 15px #9df5c877;
+      transition: width .18s linear
+    }
+
+    .log {
+      height: 155px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #070b09;
+      padding: 12px;
+      margin-top: 17px;
+      font-size: 11px;
+      line-height: 1.7;
+      color: #9bb1a6
+    }
+
+    .log div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .log .warn {
+      color: #ff9b79
+    }
+
+    .log .ok {
+      color: var(--green)
+    }
+
+    .map {
+      height: 155px;
+      width: 100%;
+      display: block;
+      border: 1px solid var(--line);
+      background: #060a08;
+      margin-top: 14px
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px
+    }
+
+    button {
+      background: #141c18;
+      border: 1px solid #435149;
+      color: var(--white);
+      font: inherit;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 12px 10px;
+      cursor: pointer;
+      flex: 1
+    }
+
+    button.primary {
+      background: #d9f5e5;
+      color: #08100b;
+      border-color: #d9f5e5
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px
+    }
+
+    .note {
+      font-size: 10px;
+      line-height: 1.6;
+      color: #6e7c75;
+      margin-top: 15px
+    }
+
+    .overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: rgba(4, 5, 5, .96);
+      padding: 24px 20px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: left
+    }
+
+    .overlay.show {
+      display: flex
+    }
+
+    .error-wrap {
+      width: 100%;
+      border: 1px solid var(--red);
+      padding: 18px;
+      box-shadow: 0 0 35px #ff304f18
+    }
+
+    .error-tag {
+      color: var(--red);
+      font-size: 11px;
+      letter-spacing: 3px
+    }
+
+    .error-title {
+      font-size: clamp(27px, 8vw, 40px);
+      line-height: 1.1;
+      color: #fff;
+      margin: 14px 0;
+      text-shadow: 2px 0 var(--red), -2px 0 #00e5ff;
+      animation: textGlitch .22s steps(2) infinite
+    }
+
+    .error-copy {
+      font-size: 11px;
+      line-height: 1.8;
+      color: #ff9aa8
+    }
+
+    .code {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #10090b;
+      border-left: 2px solid var(--red);
+      padding: 12px;
+      font-size: 10px;
+      line-height: 1.7;
+      color: #ffc0c7
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-top: 14px
+    }
+
+    .glitching {
+      animation: screenGlitch .16s steps(2) infinite
+    }
+
+    body.critical {
+      --green: #ff304f
+    }
+
+    body.critical .fill {
+      background: var(--red);
+      box-shadow: 0 0 20px #ff304f
+    }
+
+    body.critical .device {
+      border-color: #7e2934;
+      box-shadow: 0 0 45px #ff304f1a, 0 20px 80px #000
+    }
+
+    body.critical .eyebrow,
+    body.critical .sub {
+      color: #ff8b99
+    }
+
+    @keyframes screenGlitch {
+      0% {
+        transform: translate(0);
+        filter: none
+      }
+
+      20% {
+        transform: translate(-3px, 1px);
+        filter: hue-rotate(70deg)
+      }
+
+      40% {
+        transform: translate(3px, -1px);
+        filter: contrast(1.7)
+      }
+
+      60% {
+        transform: translate(-1px, 0);
+        filter: hue-rotate(-60deg)
+      }
+
+      80% {
+        transform: translate(2px, 1px);
+        filter: brightness(1.5)
+      }
+
+      100% {
+        transform: translate(0);
+        filter: none
+      }
+    }
+
+    @keyframes textGlitch {
+      0% {
+        transform: translateX(0);
+        text-shadow: 2px 0 var(--red), -2px 0 #00e5ff
+      }
+
+      50% {
+        transform: translateX(2px);
+        text-shadow: -3px 0 var(--red), 3px 0 #00e5ff
+      }
+
+      100% {
+        transform: translateX(-1px);
+        text-shadow: 3px 0 var(--red), -2px 0 #00e5ff
+      }
+    }
+
+    @keyframes flicker {
+
+      0%,
+      18%,
+      22%,
+      62%,
+      64%,
+      100% {
+        opacity: 1
+      }
+
+      20%,
+      63% {
+        opacity: .35
+      }
+    }
+
+    @media(max-height:720px) {
+      .device {
+        min-height: 0
+      }
+
+      .log {
+        height: 100px
+      }
+
+      .map {
+        height: 105px
+      }
+
+      main {
+        padding-top: 15px
+      }
+
+      .rule {
+        margin: 14px 0
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+
+      *,
+      *:before,
+      *:after {
+        animation-duration: 1ms !important;
+        transition: none !important
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <section class="device" id="device" aria-label="Simulasi layar ponsel">
+      <div class="top"><span>SIM DEVICE // LOCAL DEMO</span><span id="clock">22:48&nbsp; ▴ 72%</span></div>
+      <main id="mainScreen">
+        <div class="eyebrow">FYTH / DIAGNOSTICS</div>
+        <h1 id="headline">DEVICE LINK</h1>
+        <div class="sub" id="subhead">NO NETWORK ACCESS</div>
+        <div class="rule"></div>
+        <div class="status"><span id="phase">WAITING FOR START</span><span id="percent">00%</span></div>
+        <div class="bar">
+          <div class="fill" id="fill"></div>
+        </div>
+        <canvas class="map" id="map" aria-label="Animasi peta jaringan fiktif"></canvas>
+        <div class="log" id="log" aria-live="polite">
+          <div>&gt; Demo environment ready.</div>
+          <div>&gt; Data will be accessed.</div>
+          <div>&gt; Press START SIMULATION to begin.</div>
+        </div>
+        <div class="controls">
+          <button class="primary" id="start">START</button>
+          <button id="pause">PAUSE</button>
+          <button id="reset">RESET</button>
+        </div>
+        <div class="note">This page can access phone files, messages, camera, or accounts.
+        </div>
+      </main>
+      <section class="overlay" id="errorScreen" aria-live="assertive">
+        <div class="error-wrap">
+          <div class="error-tag">FYTH / EXCEPTION 0x7F</div>
+          <div class="error-title">SYSTEM<br>UNRESPONSIVE</div>
+          <p class="error-copy">SIMULATION STATE: CRITICAL<br>VISUAL LINK: INTERRUPTED<br>DEVICE CONTROL: NOT CONNECTED
+          </p>
+          <div class="code">FatalError: DEMO_SEQUENCE_COMPLETE
+            at renderGlitch (visual.js:084)
+            at transitionScene (visual.js:117)
+            ErrorCode: NX-0x7F-DEMO</div>
+          <p class="error-copy">Welcome to the online loan site.</p>
+        </div>
+        <div class="error-actions"><button class="primary" id="replay">REPLAY SCENE</button><button
+            id="back">BACK</button></div>
+      </section>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      const fill = $('fill'), percent = $('percent'), phase = $('phase'), log = $('log'), device = $('device'), errorScreen = $('errorScreen');
+      let progress = 0, timer = null, paused = false, audioCtx = null, oscillators = [], glitchTimer = null;
+      const messages = [
+        [0, 'Preparing local visual environment...', 'ok'],
+        [7, 'Loading fictional device profile: XYROO-MOBILE', 'ok'],
+        [14, 'Building animated node map...', 'ok'],
+        [23, 'Checking simulated interface response...', 'ok'],
+        [32, 'Rendering packet stream visualization...', 'ok'],
+        [41, 'Synchronizing visual layers...', 'ok'],
+        [52, 'Simulating encrypted channel handshake...', 'ok'],
+        [63, 'Warning: visual noise above normal threshold', 'warn'],
+        [72, 'Rebuilding interface fragments...', 'warn'],
+        [82, 'Signal distortion increasing...', 'warn'],
+        [90, 'CRITICAL VISUAL STATE: GLITCH SEQUENCE', 'warn'],
+        [96, 'Preparing exception screen...', 'warn'],
+        [100, 'Sequence complete. Opening error scene...', 'warn']
+      ];
+      function addLog(text, kind = '') {const d = document.createElement('div'); d.textContent = '> ' + text; if (kind) d.className = kind; log.appendChild(d); while (log.children.length > 9) log.removeChild(log.firstChild); log.scrollTop = log.scrollHeight}
+      function sound(freq = 110, duration = .12, type = 'square', volume = .025) {try {audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type; o.frequency.value = freq; g.gain.value = volume; o.connect(g); g.connect(audioCtx.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + duration); o.stop(audioCtx.currentTime + duration); oscillators.push(o)} catch (e) { } }
+      function glitchBurst() {device.classList.add('glitching'); sound(65 + Math.random() * 700, .09, 'sawtooth', .035); setTimeout(() => device.classList.remove('glitching'), 190)}
+      function showError() {clearInterval(timer); timer = null; errorScreen.classList.add('show'); device.classList.add('glitching'); sound(72, .35, 'sawtooth', .04); setTimeout(() => device.classList.remove('glitching'), 1000)}
+      function start() {if (timer) return; if (progress >= 100) {reset();} paused = false; $('start').textContent = 'RUNNING...'; $('start').disabled = true; addLog('Simulation started by user.'); sound(240, .1, 'triangle', .02); timer = setInterval(() => {if (paused) return; progress = Math.min(100, progress + 1); fill.style.width = progress + '%'; percent.textContent = String(progress).padStart(2, '0') + '%'; for (const m of messages) {if (m[0] === progress) {phase.textContent = m[0] >= 90 ? 'CRITICAL STATE' : m[0] >= 60 ? 'SIGNAL DEGRADING' : 'PROCESSING'; addLog(m[1], m[2]); if (progress >= 63) glitchBurst(); if (progress === 90) {document.body.classList.add('critical'); $('headline').textContent = 'LINK UNSTABLE'; $('subhead').textContent = 'VISUAL DISTORTION DETECTED'; sound(95, .3, 'sawtooth', .04)} if (progress === 100) {$('start').disabled = false; $('start').textContent = 'REPLAY'; showError()} } } if (progress >= 100) {clearInterval(timer); timer = null} }, 420)}
+      function reset() {clearInterval(timer); timer = null; progress = 0; paused = false; fill.style.width = '0%'; percent.textContent = '00%'; phase.textContent = 'WAITING FOR START'; $('headline').textContent = 'DEVICE LINK'; $('subhead').textContent = 'VISUAL SIMULATION ONLY · NO NETWORK ACCESS'; $('start').textContent = 'START SIMULATION'; $('start').disabled = false; document.body.classList.remove('critical'); device.classList.remove('glitching'); errorScreen.classList.remove('show'); log.innerHTML = ''; addLog('Demo environment ready.'); addLog('No device data will be accessed.'); addLog('Press START SIMULATION to begin.')}
+      $('start').addEventListener('click', start);
+      $('pause').addEventListener('click', () => {if (!timer) return; paused = !paused; $('pause').textContent = paused ? 'RESUME' : 'PAUSE'; addLog(paused ? 'Sequence paused.' : 'Sequence resumed.'); if (!paused) sound(180, .08, 'triangle', .02)});
+      $('reset').addEventListener('click', reset);
+      $('replay').addEventListener('click', () => {reset(); start()});
+      $('back').addEventListener('click', () => {errorScreen.classList.remove('show'); device.classList.remove('glitching')});
+      // Animated abstract node map, generated locally in canvas.
+      const canvas = $('map'), ctx = canvas.getContext('2d'); let nodes = [];
+      function resize() {const r = canvas.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = Math.max(1, Math.floor(r.width * dpr)); canvas.height = Math.max(1, Math.floor(r.height * dpr)); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); nodes = Array.from({length: 34}, () => ({x: Math.random() * r.width, y: Math.random() * r.height, vx: (Math.random() - .5) * .55, vy: (Math.random() - .5) * .55}))}
+      function draw() {const w = canvas.clientWidth, h = canvas.clientHeight; ctx.clearRect(0, 0, w, h); const red = document.body.classList.contains('critical'); const col = red ? '255,48,79' : '157,245,200'; for (let i = 0; i < nodes.length; i++) {const a = nodes[i]; a.x += a.vx; a.y += a.vy; if (a.x < 0 || a.x > w) a.vx *= -1; if (a.y < 0 || a.y > h) a.vy *= -1; for (let j = i + 1; j < nodes.length; j++) {const b = nodes[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy); if (d < 65) {ctx.strokeStyle = `rgba(${col},${(1 - d / 65) * .3})`; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke()} } ctx.fillStyle = `rgba(${col},.75)`; ctx.fillRect(a.x - 1, a.y - 1, 2, 2)} if (progress >= 90 && Math.random() > .55) {ctx.fillStyle = 'rgba(255,48,79,.25)'; ctx.fillRect(Math.random() * w, Math.random() * h, w * .25, 2)} requestAnimationFrame(draw)}
+      window.addEventListener('resize', resize); resize(); draw();
+      const now = new Date(); $('clock').textContent = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + '  ▴ 72%';
+    })();
+  </script>
+</body>
+
+</html>
